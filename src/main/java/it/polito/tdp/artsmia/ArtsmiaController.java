@@ -70,11 +70,11 @@ public class ArtsmiaController {
         		return;
     		}
     		
-    		List<Artist> percorso = this.model.getPercorso(idA);
+    		List<Artist> percorso = this.model.trovaPercorso(idA);
     		for(Artist a : percorso)
     			this.txtResult.appendText(a.toString() + "\n");
     		
-    		this.txtResult.appendText("Numero di esposizioni: " + this.model.getEspPercorso());
+    		//this.txtResult.appendText("Numero di esposizioni: " + this.model.getEspPercorso());
     	}
     	catch(NumberFormatException nfe) {
     		this.txtResult.appendText("Inserire un numero!");

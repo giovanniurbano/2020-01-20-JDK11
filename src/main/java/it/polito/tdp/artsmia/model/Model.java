@@ -22,8 +22,8 @@ public class Model {
 	private List<Adiacenza> archi;
 	
 	private List<Artist> migliore;
-	private double esposizioni;
 	private int nEsp;
+	private List<Artist> best;
 	
 	public Model() {
 		this.dao = new ArtsmiaDAO();
@@ -71,52 +71,35 @@ public class Model {
 		this.migliore = new ArrayList<Artist>();
 		List<Artist> parziale = new ArrayList<Artist>();
 		parziale.add(this.idMap.get(idA));
-		this.cerca(parziale, 1);
+		this.cerca(parziale, 0);
 		
 		return migliore;
 	}
 
-	private void cerca(List<Artist> parziale, int L) {
+	private void cerca(List<Artist> parziale, double esposizioni) {
 		Set<DefaultWeightedEdge> edges = this.grafo.outgoingEdgesOf(parziale.get(parziale.size()-1));
-		int ck = 0;
-		for(DefaultWeightedEdge e : edges) {
-			//controllo se c'è almeno un arco che abbia il peso che mi interessa
-			double esp = this.grafo.getEdgeWeight(e);
-			if(L > 1 && esp == esposizioni)
-				ck++;
-		}
-		
-		//casi terminali
-		if(ck > 0 && parziale.size() > migliore.size()) {
-			this.migliore = new ArrayList<Artist>(parziale);
-			this.nEsp = (int) esposizioni;
-		}
-		else if(ck == 0 && parziale.size() > 1)
-			return;
-		
-		if(L == this.grafo.vertexSet().size()) {
-			//artisti finiti
-			return;
-		}
 		
 		for(DefaultWeightedEdge e : edges) {
 			double esp = this.grafo.getEdgeWeight(e);
-			if(parziale.size() == 1) {
-				this.esposizioni = esp;
-				Artist a = this.grafo.getEdgeTarget(e);
+			Artist a = this.grafo.getEdgeTarget(e);
+			if(esposizioni == 0 && !parziale.contains(a)) {
 				parziale.add(a);
-				cerca(parziale, L+1);
+				cerca(parziale, esp);
 				parziale.remove(parziale.size()-1);
 			}
 			else {
-				Artist a = this.grafo.getEdgeTarget(e);
 				if(esp == esposizioni && !parziale.contains(a)) {
-					this.esposizioni = esp;
 					parziale.add(a);
-					cerca(parziale, L+1);
+					cerca(parziale, esposizioni);
 					parziale.remove(parziale.size()-1);
 				}
 			}
+		}
+		
+		//casi terminali
+		if(parziale.size() > migliore.size()) {
+			this.migliore = new ArrayList<Artist>(parziale);
+			this.nEsp = (int) esposizioni;
 		}
 	}
 
@@ -124,5 +107,44 @@ public class Model {
 		return this.nEsp;
 	}
 	
+	
+	
+	
+	
+	//soluzione prof
+	public List<Artist> trovaPercorso(Integer sorgente){
+		this.best = new ArrayList<Artist>();
+		List<Artist> parziale = new ArrayList<>();
+		parziale.add(this.idMap.get(sorgente));
+		//lancio la ricorsione
+		ricorsione(parziale, -1);
+		
+		return best;
+	}
+	
+	//soluzione prof
+	private void ricorsione(List<Artist> parziale, int peso) {
+		Artist ultimo = parziale.get(parziale.size() - 1);
+		//ottengo i vicini
+		List<Artist> vicini = Graphs.neighborListOf(this.grafo, ultimo);
+		for(Artist vicino : vicini) {
+			if(!parziale.contains(vicino) && peso == -1) {
+				parziale.add(vicino);
+				ricorsione(parziale, (int) this.grafo.getEdgeWeight(this.grafo.getEdge(ultimo, vicino)));
+				parziale.remove(vicino);
+			} else {
+				if(!parziale.contains(vicino) && this.grafo.getEdgeWeight(this.grafo.getEdge(ultimo, vicino)) == peso) {
+					parziale.add(vicino);
+					ricorsione(parziale, peso);
+					parziale.remove(vicino);
+				}
+			}
+		}
+		
+		if(parziale.size() > best.size()) {
+			this.best = new ArrayList<>(parziale);
+		}
+		
+	}
 	
 }
