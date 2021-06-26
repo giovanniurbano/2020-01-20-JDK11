@@ -1,5 +1,17 @@
 package it.polito.tdp.artsmia.model;
 
-public class Model {
+import java.util.List;
 
+import it.polito.tdp.artsmia.db.ArtsmiaDAO;
+
+public class Model {
+	private ArtsmiaDAO dao;
+	
+	public Model() {
+		this.dao = new ArtsmiaDAO();
+	}
+	
+	public List<String> listRoles() {
+		return this.dao.listRoles();
+	}
 }
