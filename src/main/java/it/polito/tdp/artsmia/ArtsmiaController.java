@@ -54,7 +54,14 @@ public class ArtsmiaController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Crea grafo");
+    	
+    	String ruolo = this.boxRuolo.getValue();
+    	if(ruolo == null) {
+    		this.txtResult.appendText("Scegliere un ruolo!");
+    		return;
+    	}
+    	String msg = this.model.creaGrafo(ruolo);
+    	this.txtResult.appendText(msg);
     }
 
     public void setModel(Model model) {
