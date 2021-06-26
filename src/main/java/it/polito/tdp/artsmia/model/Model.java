@@ -1,5 +1,7 @@
 package it.polito.tdp.artsmia.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ public class Model {
 	private Graph<Artist, DefaultWeightedEdge> grafo;
 	private List<Artist> vertici;
 	private Map<Integer, Artist> idMap;
+	private List<Adiacenza> archi;
 	
 	public Model() {
 		this.dao = new ArtsmiaDAO();
@@ -37,11 +40,23 @@ public class Model {
 		Graphs.addAllVertices(this.grafo, this.vertici);
 		
 		//archi
-		List<Adiacenza> archi = this.dao.getAdiacenze(ruolo, idMap);
+		archi = this.dao.getAdiacenze(ruolo, idMap);
 		for(Adiacenza a : archi) {
 			Graphs.addEdge(this.grafo, a.getA1(), a.getA2(), a.getPeso());
 		}
 		
 		return String.format("Grafo creato con %d vertici e %d archi\n", this.grafo.vertexSet().size(), this.grafo.edgeSet().size());
 	}
+
+	public Graph<Artist, DefaultWeightedEdge> getGrafo() {
+		return grafo;
+	}
+
+	public List<Adiacenza> getArtistiConnessi() {
+		List<Adiacenza> connessi = new ArrayList<Adiacenza>(archi);
+		Collections.sort(connessi);
+		return connessi;
+	}
+	
+	
 }

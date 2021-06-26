@@ -1,11 +1,10 @@
 package it.polito.tdp.artsmia.model;
 
-public class Adiacenza {
+public class Adiacenza implements Comparable<Adiacenza>{
 	private Artist a1;
 	private Artist a2;
 	private Double peso;
 	public Adiacenza(Artist a1, Artist a2, Double peso) {
-		super();
 		this.a1 = a1;
 		this.a2 = a2;
 		this.peso = peso;
@@ -29,5 +28,12 @@ public class Adiacenza {
 		this.peso = peso;
 	}
 	
+	public int compareTo(Adiacenza o) {
+		return -this.peso.compareTo(o.peso);
+	}
+	@Override
+	public String toString() {
+		return this.a1.getId() + " - " + this.a2.getId() + " - " + this.peso;
+	}
 	
 }
