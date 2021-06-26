@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.artsmia.model.Adiacenza;
+import it.polito.tdp.artsmia.model.Artist;
 import it.polito.tdp.artsmia.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -59,7 +60,26 @@ public class ArtsmiaController {
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Calcola percorso");
+    	txtResult.appendText("Calcola percorso\n");
+    	
+    	String aS = this.txtArtista.getText();
+    	try {
+    		int idA = Integer.parseInt(aS);
+    		if(!this.model.getIdMap().containsKey(idA)) {
+    			this.txtResult.appendText("Artista non presente!");
+        		return;
+    		}
+    		
+    		List<Artist> percorso = this.model.getPercorso(idA);
+    		for(Artist a : percorso)
+    			this.txtResult.appendText(a.toString() + "\n");
+    		
+    		this.txtResult.appendText("Numero di esposizioni: " + this.model.getEspPercorso());
+    	}
+    	catch(NumberFormatException nfe) {
+    		this.txtResult.appendText("Inserire un numero!");
+    		return;
+    	}
     }
 
     @FXML
